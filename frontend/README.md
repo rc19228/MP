@@ -1,16 +1,19 @@
 # 🎨 Frontend - Agentic RAG Dashboard
 
-React-based dark-themed dashboard for financial report analysis with dynamic structured output rendering, glassmorphism UI, and real-time agent workflow visualization.
+React-based dark-themed dashboard for financial report analysis with dynamic structured output rendering, glassmorphism UI, real-time agent workflow visualization, and enhanced readability formatting.
 
 ## ✨ Features
 
 - 🌑 **Pure Black Theme** - Ultra-dark gradients (#000000 → #0a0c10 → #0f1117)
 - 🔮 **Glassmorphism UI** - Backdrop blur, transparent cards, smooth transitions
-- 📊 **Dynamic SOP Renderer** - Recursive structured output display for any JSON shape
-- 🎯 **Upload Modal** - Prominent success popup with suggested prompts
+- 📊 **Smart Output Formatting** - Intelligent rendering for plans, metrics, risks, and analysis
+- 🎯 **Upload Modal** - Drag-and-drop PDF upload with success feedback
 - 📈 **Metrics Dashboard** - Real-time stats with animated cards
-- 🤖 **Agent Workflow Viz** - Live pipeline status (Planner → Retriever → Analyzer → Generator → Critic)
+- 🤖 **Agent Workflow Viz** - Live 5-stage pipeline status with retry indicators
 - ⚡ **Smooth Animations** - Staggered entrance, hover effects, pulse animations
+- 📝 **Readable Output** - Structured sections, numbered lists, proper paragraph breaks
+- 🔄 **Retry Visualization** - Shows parameter adjustments across retry attempts
+- 🎨 **Responsive Design** - Mobile-first approach with breakpoints
 
 ## 🏗️ Architecture
 
@@ -24,21 +27,30 @@ App.jsx
   ├── UploadPanel.jsx            # PDF upload with drag & drop
   │   ├── File input (hidden)
   │   ├── Drop zone (click + drag)
-  │   └── Success modal
+  │   └── Inline success message
   │
   ├── QueryPanel.jsx             # Query input + submit
   │   ├── Text area
   │   ├── Submit button
-  │   └── Loading spinner
+  │   ├── Loading spinner
+  │   ├── Agent workflow animation
+  │   └── Enhanced error handling
   │
-  ├── ResultDisplay.jsx          # Query results with SOP
+  ├── AgentWorkflow.jsx          # 5-stage pipeline visualization
+  │   ├── Planner → Retriever → Analyzer → Generator → Critic
+  │   ├── Active/completed indicators
+  │   ├── Confidence progress bar
+  │   └── Retry count badges
+  │
+  ├── ResultDisplay.jsx          # Formatted query results
   │   ├── Query header
-  │   ├── Plan display
+  │   ├── Plan display with retry info
+  │   ├── Parameter adjustments
   │   ├── Executive summary
-  │   ├── Recursive analysis renderer
-  │   ├── Risk factors
-  │   ├── Computed metrics table
-  │   └── Additional output (unknown fields)
+  │   ├── Structured analysis (sections & paragraphs)
+  │   ├── Numbered risk factors list
+  │   ├── Metrics table
+  │   └── Confidence badge
   │
   ├── MetricsPanel.jsx          # Statistics dashboard
   │   ├── Document count card
@@ -55,13 +67,14 @@ App.jsx
 frontend/
 ├── src/
 │   ├── api/
-│   │   └── api.js              # Axios API client with fallbacks
+│   │   └── api.js              # Axios client (120s timeout for retries)
 │   │
 │   ├── components/
 │   │   ├── Header.jsx          # Top navigation bar
-│   │   ├── UploadPanel.jsx     # PDF upload + success modal
-│   │   ├── QueryPanel.jsx      # Query input interface
-│   │   ├── ResultDisplay.jsx   # Dynamic SOP result renderer
+│   │   ├── UploadPanel.jsx     # PDF upload interface
+│   │   ├── QueryPanel.jsx      # Query input with agent animation
+│   │   ├── AgentWorkflow.jsx   # 5-stage pipeline visualization
+│   │   ├── ResultDisplay.jsx   # Smart formatted result renderer
 │   │   ├── MetricsPanel.jsx    # Statistics cards
 │   │   └── Footer.jsx          # Footer component
 │   │
@@ -70,13 +83,14 @@ frontend/
 │   ├── index.css               # Tailwind imports
 │   └── main.jsx                # React entry point
 │
-├── public/                     # Static assets
+├── .env                        # Environment variables (gitignored)
+├── .env.example               # Environment variables template
 ├── index.html                  # HTML shell
-├── vite.config.js              # Vite config + API proxy
+├── vite.config.js              # Vite config (uses env for proxy)
 ├── tailwind.config.js          # Tailwind theme config
 ├── postcss.config.js           # PostCSS setup
 ├── package.json                # Dependencies
-└── package-lock.json           # Lock file
+└── README.md                   # This file
 ```
 
 ## 🚀 Getting Started
@@ -90,20 +104,38 @@ npm install
 
 ### 2. Configure Environment
 
-Create `.env` file (optional):
+Copy the example environment file:
 
 ```bash
-# API endpoint (defaults to Vite proxy /api)
-VITE_API_BASE_URL=http://localhost:8888
+cp .env.example .env
 ```
 
+Edit `.env` if needed:
+
+```bash
+# API endpoint (leave empty to use Vite proxy)
+VITE_API_BASE_URL=
+
+# Backend URL for proxy (default: http://localhost:8888)
+VITE_BACKEND_URL=http://localhost:8888
+```
+
+**Configuration Options:**
+
+- **Development (with proxy):** Leave `VITE_API_BASE_URL` empty. Vite will proxy `/api/*` requests to `VITE_BACKEND_URL`.
+- **Production:** Set `VITE_API_BASE_URL` to your deployed backend URL (e.g., `https://api.yourapp.com`).
+
+**⚠️ Note:** Never commit `.env` with sensitive data! Use `.env.example` as a template.
+
 ### 3. Start Development Server
+
+Ensure backend is running on port 8888, then:
 
 ```bash
 npm run dev
 ```
 
-Server will start on `http://localhost:5173`
+Frontend will start on `http://localhost:5173`
 
 ### 4. Build for Production
 
@@ -118,6 +150,22 @@ Output will be in `dist/` folder.
 ```bash
 npm run preview
 ```
+
+## 🔧 Configuration
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_API_BASE_URL` | Backend API URL (empty for proxy) | `` |
+| `VITE_BACKEND_URL` | Proxy target URL | `http://localhost:8888` |
+
+### API Client Settings
+
+The `api.js` client is configured with:
+- **Timeout:** 120 seconds (allows backend to complete 3 retry attempts)
+- **Base URL:** Uses `VITE_API_BASE_URL` or `/api` (proxy)
+- **Error Handling:** Distinguishes timeouts, server errors, and network issues
 
 ## 🎨 Theme System
 
@@ -134,6 +182,11 @@ npm run preview
 --primary-dark: #2563eb
 --accent: #8b5cf6             /* Purple */
 --accent-dark: #7c3aed
+
+/* Status Colors */
+--success: #10b981            /* Green */
+--warning: #f59e0b            /* Orange */
+--error: #ef4444              /* Red */
 
 /* Text */
 --text-primary: #ffffff       /* White */

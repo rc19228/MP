@@ -3,7 +3,7 @@ Planner Agent
 Classifies user intent and determines required analysis
 """
 from typing import Dict
-from utils.ollama_client import get_ollama_client
+from utils.llm_client import get_llm_client
 
 
 class PlannerAgent:
@@ -11,7 +11,7 @@ class PlannerAgent:
         """
         Initialize Planner Agent
         """
-        self.ollama = get_ollama_client()
+        self.llm = get_llm_client()
         self.system_prompt = """You are a financial analysis planning assistant.
 Your task is to classify the user's query intent and determine what analysis is needed.
 
@@ -50,7 +50,7 @@ Return JSON with this structure:
 
 JSON response:"""
         
-        result = self.ollama.generate_json(
+        result = self.llm.generate_json(
             prompt=prompt,
             system=self.system_prompt,
             temperature=0.1

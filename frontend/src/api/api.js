@@ -5,7 +5,7 @@ let statsEndpointAvailable = true;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  timeout: 120000, // 2 minutes to allow for retries
   headers: {
     'Content-Type': 'application/json',
   },
@@ -25,8 +25,20 @@ export const uploadPDF = async (file) => {
 };
 
 export const askQuery = async (query) => {
-  const response = await api.post('/query', { question: query });
-  return response.data;
+  try {
+    console.log('Sending query to backend:', query);
+    const response = await api.post('/query', { question: query });
+    console.log('Received response from backend:', response.status, response.data);
+    return response.data;
+  } catch (error) {
+    console.error('API Error in askQuery:', {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    throw error;
+  }
 };
 
 export const getStats = async () => {

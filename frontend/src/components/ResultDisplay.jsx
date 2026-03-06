@@ -2,41 +2,178 @@ import React from 'react';
 import { FileText, AlertCircle, CheckCircle2, BookOpen } from 'lucide-react';
 
 const ResultDisplay = ({ result }) => {
-  const renderValue = (value, depth = 0) => {
+  // Render plan in a compact, readable format
+  const renderPlan = (plan) => {
+    if (!plan || typeof plan !== 'object') return null;
+    
+    return (
+      <div className="space-y-3">
+        {plan.intent && (
+          <div className="flex items-start gap-3">
+            <span className="text-primary-400 font-semibold min-w-[120px]">Intent:</span>
+            <span className="text-gray-200">{plan.intent.replace(/_/g, ' ')}</span>
+          </div>
+        )}
+        {plan.metrics_required && plan.metrics_required.length > 0 && (
+          <div className="flex items-start gap-3">
+            <span className="text-primary-400 font-semibold min-w-[120px]">Metrics:</span>
+            <span className="text-gray-200">{Array.isArray(plan.metrics_required) ? plan.metrics_required.join(', ') : plan.metrics_required}</span>
+          </div>
+        )}
+        {plan.time_range && (
+          <div className="flex items-start gap-3">
+            <span className="text-primary-400 font-semibold min-w-[120px]">Time Range:</span>
+            <span className="text-gray-200">{plan.time_range}</span>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Render computed metrics as a clean table
+  const renderMetrics = (metrics) => {
+    if (!metrics || typeof metrics !== 'object') return null;
+    const entries = Object.entries(metrics);
+    if (entries.length === 0) return <span className="text-gray-500">No metrics available</span>;
+
+    return (
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-white/10">
+              <th className="text-left py-2 px-3 text-primary-400 font-semibold">Metric</th>
+              <th className="text-right py-2 px-3 text-primary-400 font-semibold">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {entries.map(([key, value]) => (
+              <tr key={key} className="border-b border-white/5 hover:bg-white/5">
+                <td className="py-3 px-3 text-gray-300">{key.replace(/_/g, ' ')}</td>
+                <td className="py-3 px-3 text-right text-gray-200 font-medium">
+                  {typeof value === 'object' ? JSON.stringify(value) : value}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  // Render risk factors as bullet list or text
+  const renderRiskFactors = (risks) => {
+    if (!risks) return <span className="text-gray-500">No risk factors identified</span>;
+    
+    if (Array.isArray(risks)) {
+      return (
+        <ul className="space-y-3">
+          {risks.map((risk, idx) => (
+            <li key={idx} className="text-gray-200 leading-relaxed flex gap-3">
+              <span className="text-warning-400 font-semibold flex-shrink-0">{idx + 1})</span>
+              <span>{risk}</span>
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    
+    if (typeof risks === 'string') {
+      // Check if it's a numbered list (e.g., "1) ", "2) ")
+      const lines = risks.split('\n').filter(line => line.trim());
+      const isNumberedList = lines.some(line => /^\d+\)/.test(line.trim()));
+      
+      if (lines.length > 1) {
+        return (
+          <ul className="space-y-3">
+            {lines.map((line, idx) => {
+              // Remove the number prefix if it exists for cleaner display
+              const cleanLine = line.replace(/^\d+\)\s*/, '').trim();
+              return (
+                <li key={idx} className="text-gray-200 leading-relaxed flex gap-3">
+                  <span className="text-warning-400 font-semibold flex-shrink-0">{idx + 1})</span>
+                  <span>{cleanLine}</span>
+                </li>
+              );
+            })}
+          </ul>
+        );
+      }
+      return <p className="text-gray-200 leading-relaxed">{risks}</p>;
+    }
+    
+    return <pre className="text-gray-200 whitespace-pre-wrap">{JSON.stringify(risks, null, 2)}</pre>;
+  };
+
+  // Render analysis (can be string or object)
+  const renderAnalysis = (analysis) => {
+    if (!analysis) return <span className="text-gray-500">No analysis available</span>;
+    
+    if (typeof analysis === 'string') {
+      // Split by double line breaks for paragraph formatting
+      const paragraphs = analysis.split('\n\n').filter(p => p.trim());
+      
+      if (paragraphs.length > 1) {
+        return (
+          <div className="space-y-5">
+            {paragraphs.map((para, idx) => {
+              const trimmedPara = para.trim();
+              
+              // Check if paragraph starts with a section label (e.g., "Company Name:", "Interpretation:")
+              const sectionMatch = trimmedPara.match(/^([A-Za-z\s&]+):\s*(.+)/s);
+              
+              if (sectionMatch) {
+                return (
+                  <div key={idx} className="border-l-2 border-primary-500/40 pl-4">
+                    <div className="text-sm font-semibold text-primary-400 mb-2">{sectionMatch[1]}</div>
+                    <p className="text-gray-200 leading-relaxed">{sectionMatch[2]}</p>
+                  </div>
+                );
+              }
+              
+              return (
+                <p key={idx} className="text-gray-200 leading-relaxed">
+                  {trimmedPara}
+                </p>
+              );
+            })}
+          </div>
+        );
+      }
+      
+      return <p className="text-gray-200 whitespace-pre-wrap leading-relaxed">{analysis}</p>;
+    }
+    
+    if (typeof analysis === 'object') {
+      return (
+        <div className="space-y-4">
+          {Object.entries(analysis).map(([key, value]) => (
+            <div key={key} className="border-l-2 border-primary-500/30 pl-4">
+              <div className="text-sm font-semibold text-primary-400 mb-2">{key.replace(/_/g, ' ').toUpperCase()}</div>
+              <div className="text-gray-200">
+                {typeof value === 'object' ? (
+                  <pre className="text-sm bg-black/40 p-3 rounded overflow-x-auto">{JSON.stringify(value, null, 2)}</pre>
+                ) : (
+                  <span>{String(value)}</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    
+    return <span className="text-gray-200">{String(analysis)}</span>;
+  };
+
+  // Generic renderValue for additional fields
+  const renderValue = (value) => {
     if (value === null || value === undefined) {
       return <span className="text-gray-500">Not available</span>;
     }
-
-    if (Array.isArray(value)) {
-      if (value.length === 0) return <span className="text-gray-500">[]</span>;
-      return (
-        <div className="space-y-2">
-          {value.map((item, index) => (
-            <div key={`${depth}-${index}`} className="pl-3 border-l border-white/10">
-              {renderValue(item, depth + 1)}
-            </div>
-          ))}
-        </div>
-      );
-    }
-
     if (typeof value === 'object') {
-      const entries = Object.entries(value);
-      if (entries.length === 0) return <span className="text-gray-500">{'{}'}</span>;
-      return (
-        <div className="space-y-2">
-          {entries.map(([key, val]) => (
-            <div key={`${depth}-${key}`} className="bg-black/20 border border-white/5 rounded-lg p-3">
-              <div className="text-xs uppercase tracking-wide text-primary-300 mb-1">{key.replace(/_/g, ' ')}</div>
-              <div className="text-sm md:text-base text-gray-200">{renderValue(val, depth + 1)}</div>
-            </div>
-          ))}
-        </div>
-      );
+      return <pre className="text-sm bg-black/40 p-3 rounded overflow-x-auto">{JSON.stringify(value, null, 2)}</pre>;
     }
-
-    if (typeof value === 'boolean') return <span>{value ? 'true' : 'false'}</span>;
-    return <span className="whitespace-pre-wrap break-words">{String(value)}</span>;
+    return <span className="text-gray-200 whitespace-pre-wrap">{String(value)}</span>;
   };
 
   const primaryKeys = new Set([
@@ -112,32 +249,64 @@ const ResultDisplay = ({ result }) => {
 
         {result.plan && (
           <div className="mb-6 bg-black/20 p-4 rounded-xl border border-white/5">
-            <div className="text-xs uppercase tracking-wide text-gray-400 mb-2">Planner Output</div>
-            {renderValue(result.plan)}
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-xs uppercase tracking-wide text-gray-400">Planner Output</div>
+              {result.plan.retry_attempt && (
+                <span className="text-xs px-2 py-1 bg-accent-500/20 text-accent-400 rounded-full border border-accent-500/30">
+                  Retry #{result.plan.retry_attempt}
+                </span>
+              )}
+            </div>
+            {result.plan.status && (
+              <div className="mb-3 text-sm text-gray-300 italic">
+                {result.plan.status}
+              </div>
+            )}
+            <div className="mt-3">
+              {renderPlan(result.plan)}
+            </div>
+            {result.plan.adjustments && result.plan.adjustments.length > 0 && (
+              <div className="mt-4 p-3 bg-primary-500/10 border border-primary-500/20 rounded-lg">
+                <div className="text-xs uppercase tracking-wide text-primary-400 mb-2">Parameter Adjustments</div>
+                <div className="space-y-2">
+                  {result.plan.adjustments.map((adj, idx) => (
+                    <div key={idx} className="text-sm text-gray-300">
+                      <span className="font-semibold text-primary-300">{adj.parameter}:</span>{' '}
+                      <span className="text-gray-400">{adj.original}</span>
+                      <span className="text-accent-400 mx-1">→</span>
+                      <span className="text-success-400">{adj.adjusted}</span>
+                      {adj.reason && (
+                        <div className="text-xs text-gray-400 mt-1 ml-4">→ {adj.reason}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {result.executive_summary && (
-          <div className="mb-6 bg-black/20 p-4 rounded-xl border border-white/5">
-            <div className="text-xs uppercase tracking-wide text-gray-400 mb-2">Executive Summary</div>
-            <div className="text-gray-200 text-base md:text-lg leading-relaxed whitespace-pre-wrap">{result.executive_summary}</div>
+          <div className="mb-6 bg-black/20 p-5 rounded-xl border border-white/5">
+            <div className="text-xs uppercase tracking-wide text-gray-400 mb-3">Executive Summary</div>
+            <div className="text-gray-200 text-base md:text-lg leading-relaxed">{result.executive_summary}</div>
           </div>
         )}
 
-        <div className="mb-6 bg-black/20 p-4 rounded-xl border border-white/5">
-          <div className="text-xs uppercase tracking-wide text-gray-400 mb-2">Analysis</div>
-          <div className="text-gray-200 text-base md:text-lg">{renderValue(result.analysis || result.answer || result.response || 'No analysis available')}</div>
+        <div className="mb-6 bg-black/20 p-5 rounded-xl border border-white/5">
+          <div className="text-xs uppercase tracking-wide text-gray-400 mb-4">Analysis</div>
+          <div className="text-gray-200 text-base md:text-lg">{renderAnalysis(result.analysis || result.answer || result.response)}</div>
         </div>
 
-        <div className="mb-6 bg-black/20 p-4 rounded-xl border border-white/5">
-          <div className="text-xs uppercase tracking-wide text-gray-400 mb-2">Risk Factors</div>
-          <div className="text-gray-200 text-base md:text-lg">{renderValue(result.risk_factors || 'Information not available')}</div>
+        <div className="mb-6 bg-black/20 p-5 rounded-xl border border-white/5">
+          <div className="text-xs uppercase tracking-wide text-gray-400 mb-4">Risk Factors</div>
+          <div className="text-gray-200 text-base md:text-lg">{renderRiskFactors(result.risk_factors)}</div>
         </div>
 
-        {result.computed_metrics && (
-          <div className="mb-6 bg-black/20 p-4 rounded-xl border border-white/5">
-            <div className="text-xs uppercase tracking-wide text-gray-400 mb-2">Computed Metrics</div>
-            {renderValue(result.computed_metrics)}
+        {result.computed_metrics && Object.keys(result.computed_metrics).length > 0 && (
+          <div className="mb-6 bg-black/20 p-5 rounded-xl border border-white/5">
+            <div className="text-xs uppercase tracking-wide text-gray-400 mb-4">Computed Metrics</div>
+            {renderMetrics(result.computed_metrics)}
           </div>
         )}
 

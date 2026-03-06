@@ -23,6 +23,7 @@ from agents import (
     evaluate_response
 )
 from utils.weight_decay import compute_adjusted_temperature, compute_retrieval_depth
+from utils.llm_client import get_provider_info
 
 
 # Initialize FastAPI app
@@ -94,12 +95,12 @@ async def health_check():
     """
     chroma = get_chroma_client()
     doc_count = chroma.count_documents()
+    provider_info = get_provider_info()
     
     return {
         "status": "healthy",
         "documents_indexed": doc_count,
-        "ollama_url": settings.OLLAMA_BASE_URL,
-        "model": settings.OLLAMA_MODEL
+        "llm_provider": provider_info
     }
 
 
@@ -180,21 +181,66 @@ async def query_documents(request: QueryRequest):
         
         # PHASE 1: Planning
         print("PHASE 1: Planning...")
-        plan = create_plan(query)
-        print(f"Plan: {plan}")
+        base_plan = create_plan(query)
+        print(f"Plan: {base_plan}")
         
         # Initialize retry loop
         retry_count = 0
         best_response = None
         evaluation = None
+        plan = base_plan.copy()  # Current plan that will be updated per attempt
         
-        while retry_count <= settings.MAX_RETRIES:
+        while retry_count < settings.MAX_RETRIES:
             print(f"\n--- Attempt {retry_count + 1} ---")
+            
+            # Update plan with retry information
+            plan = base_plan.copy()
+            plan["retry_attempt"] = retry_count + 1
+            plan["total_attempts"] = settings.MAX_RETRIES
+            plan["adjustments"] = []
+            
+            if retry_count == 0:
+                plan["status"] = "Initial attempt with default parameters"
+            else:
+                plan["status"] = f"Retry attempt {retry_count + 1} with adjusted parameters"
+                
+                # Document what's being adjusted
+                adjustments = []
+                
+                # Retrieval depth adjustment
+                retrieval_depth = compute_retrieval_depth(
+                    base_depth=settings.TOP_K_CHUNKS,
+                    retry_count=retry_count
+                )
+                if retrieval_depth != settings.TOP_K_CHUNKS:
+                    adjustments.append({
+                        "parameter": "retrieval_depth",
+                        "original": settings.TOP_K_CHUNKS,
+                        "adjusted": retrieval_depth,
+                        "reason": "Expanding context to capture more relevant information"
+                    })
+                
+                # Temperature adjustment
+                adjusted_temp = compute_adjusted_temperature(
+                    base_temperature=settings.LLM_TEMPERATURE,
+                    retry_count=retry_count
+                )
+                if adjusted_temp != settings.LLM_TEMPERATURE:
+                    adjustments.append({
+                        "parameter": "temperature",
+                        "original": settings.LLM_TEMPERATURE,
+                        "adjusted": round(adjusted_temp, 2),
+                        "reason": "Adjusting creativity/consistency balance for better response quality"
+                    })
+                
+                plan["adjustments"] = adjustments
+            
+            print(f"Updated plan: {plan}")
             
             # PHASE 2: Retrieval
             print("PHASE 2: Retrieving context...")
             
-            # Adjust retrieval depth on retries
+            # Use adjusted retrieval depth from plan
             retrieval_depth = settings.TOP_K_CHUNKS
             if retry_count > 0:
                 retrieval_depth = compute_retrieval_depth(
@@ -206,7 +252,7 @@ async def query_documents(request: QueryRequest):
                 query=query,
                 top_k=retrieval_depth
             )
-            print(f"Retrieved {len(chunks)} chunks")
+            print(f"Retrieved {len(chunks)} chunks (depth: {retrieval_depth})")
             
             # PHASE 3: Analysis
             print("PHASE 3: Analyzing...")
@@ -220,7 +266,7 @@ async def query_documents(request: QueryRequest):
             # PHASE 4: Generation
             print("PHASE 4: Generating response...")
             
-            # Adjust temperature on retries
+            # Use adjusted temperature from plan
             temperature = settings.LLM_TEMPERATURE
             if retry_count > 0:
                 temperature = compute_adjusted_temperature(
@@ -235,7 +281,18 @@ async def query_documents(request: QueryRequest):
                 computed_metrics=computed_metrics,
                 temperature=temperature
             )
-            print(f"Generated response with confidence: {response.get('confidence', 0.0)}")
+            
+            # Log response details for every attempt
+            print(f"\n{'─'*60}")
+            print(f"Generated Response - Attempt {retry_count + 1}:")
+            print(f"{'─'*60}")
+            print(f"Confidence: {response.get('confidence', 0.0)}")
+            print(f"Executive Summary: {response.get('executive_summary', 'N/A')[:150]}...")
+            print(f"Analysis Length: {len(response.get('analysis', ''))} characters")
+            print(f"Risk Factors: {response.get('risk_factors', 'N/A')[:100]}...")
+            if response.get('computed_metrics'):
+                print(f"Computed Metrics: {list(response.get('computed_metrics', {}).keys())}")
+            print(f"{'─'*60}\n")
             
             # PHASE 5: Critique
             print("PHASE 5: Evaluating...")
@@ -256,8 +313,38 @@ async def query_documents(request: QueryRequest):
                 print("✓ Response meets quality threshold")
                 break
             
+            # Check if we've exhausted retries
+            if retry_count >= settings.MAX_RETRIES - 1:
+                print(f"\n⚠️ Maximum retries ({settings.MAX_RETRIES}) reached. Using best available response.")
+                break
+            
             print(f"⚠ Confidence below threshold. Retrying with adjusted parameters...")
             retry_count += 1
+        
+        # Log final result summary
+        print(f"\n{'='*60}")
+        print(f"Final Result Summary:")
+        print(f"{'='*60}")
+        print(f"Total Attempts: {retry_count + 1}")
+        print(f"Final Confidence: {best_response.get('confidence', 0.0) if best_response else 0.0}")
+        print(f"Status: {'SUCCESS' if evaluation and evaluation.get('meets_threshold', False) else 'COMPLETED WITH LOW CONFIDENCE'}")
+        print(f"{'='*60}\n")
+        
+        # Ensure we have a valid response
+        if not best_response:
+            print("⚠️ No valid response generated. Returning default error response.")
+            return QueryResponse(
+                query=query,
+                plan=plan if plan else {},
+                executive_summary="Unable to generate response after multiple attempts.",
+                analysis="The system was unable to process this query. Please try rephrasing or contact support.",
+                risk_factors="Unable to assess.",
+                confidence=0.0,
+                computed_metrics={},
+                retry_count=retry_count,
+                final_weight=0.0,
+                status="error"
+            )
         
         # Return final response
         return QueryResponse(
@@ -397,8 +484,17 @@ if __name__ == "__main__":
     print("\n" + "="*60)
     print("Starting Agentic RAG Financial Analysis System")
     print("="*60)
-    print(f"Ollama URL: {settings.OLLAMA_BASE_URL}")
-    print(f"Model: {settings.OLLAMA_MODEL}")
+    
+    if settings.LLM_PROVIDER == "azure":
+        print(f"LLM Provider: Azure OpenAI")
+        print(f"Endpoint: {settings.AZURE_OPENAI_ENDPOINT}")
+        print(f"Model: {settings.AZURE_OPENAI_MODEL}")
+        print(f"Deployment: {settings.AZURE_OPENAI_DEPLOYMENT}")
+    else:
+        print(f"LLM Provider: Ollama")
+        print(f"Ollama URL: {settings.OLLAMA_BASE_URL}")
+        print(f"Model: {settings.OLLAMA_MODEL}")
+    
     print(f"ChromaDB: {settings.CHROMA_PERSIST_DIR}")
     print("="*60 + "\n")
     

@@ -16,5 +16,8 @@ chromadb>=0.4.22
 # HTTP Client
 httpx>=0.26.0
 
+# LLM Clients
+openai>=1.51.0  # Azure OpenAI SDK
+
 # Utilities
 python-dotenv>=1.0.0

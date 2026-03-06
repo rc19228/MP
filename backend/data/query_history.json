@@ -223,5 +223,455 @@
     "weight": 1.0,
     "meets_threshold": true,
     "executive_summary": "AlphaTech's financial performance has shown consistent growth across the three-year period, with revenue increasing by 54% from $120M in 2021 to $185M in 2023. Net income growth outpaced revenue growth due to operational efficiencies and cost discipline."
+  },
+  {
+    "timestamp": "2026-03-03T10:15:40.436929",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.0,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "Unable to generate analysis due to processing error."
+  },
+  {
+    "timestamp": "2026-03-03T10:15:49.371108",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.0,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "Unable to generate analysis due to processing error."
+  },
+  {
+    "timestamp": "2026-03-03T10:15:57.706356",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.0,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "Unable to generate analysis due to processing error."
+  },
+  {
+    "timestamp": "2026-03-03T10:16:42.178066",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.85,
+    "retry_count": 0,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "The company has maintained a stable debt-to-equity ratio over the last three fiscal years, with both liabilities and shareholder equity growing steadily. This suggests a well-managed capital structure, allowing for sustainable growth while minimizing financial risk."
+  },
+  {
+    "timestamp": "2026-03-06T17:42:50.433518",
+    "query": "What is the current ratio and what does it indicate about liquidity?",
+    "confidence": 0.6,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "The specific current ratio (current assets \u00f7 current liabilities) cannot be calculated from the provided documents because current asset and current liability line items are not disclosed. The reports state qualitatively that \"liquidity indicators suggest that the organization possesses sufficient short-term assets to meet immediate obligations.\" As a proxy, total assets relative to total liabilities show improving coverage for both VertexRetail and OrionTech over 2021\u20132023."
+  },
+  {
+    "timestamp": "2026-03-06T17:43:22.943266",
+    "query": "What is the current ratio and what does it indicate about liquidity?",
+    "confidence": 0.6,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "A numeric current ratio cannot be calculated from the provided documents because line-item current assets and current liabilities are not disclosed. The reports do state qualitatively that \"Liquidity indicators suggest that the organization possesses sufficient short-term assets to meet immediate obligations\" and show total assets exceeding total liabilities in the latest year (VertexRetail 2023: Total Assets $390M vs Total Liabilities $195M; OrionTech 2023: Total Assets $520M vs Total Liabilities $230M)."
+  },
+  {
+    "timestamp": "2026-03-06T17:43:50.277698",
+    "query": "What is the current ratio and what does it indicate about liquidity?",
+    "confidence": 0.6,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "The specific current ratio cannot be calculated because the financial context does not provide current assets or current liabilities. Available balance-sheet totals show growing total assets and controlled liabilities across the three companies, and narrative commentary states liquidity appears sufficient to meet short-term obligations."
+  },
+  {
+    "timestamp": "2026-03-06T17:44:13.599404",
+    "query": "What is the current ratio and what does it indicate about liquidity?",
+    "confidence": 0.6,
+    "retry_count": 3,
+    "weight": 1.0,
+    "meets_threshold": false,
+    "executive_summary": "The current ratio cannot be calculated from the provided documents because the reports do not give a breakdown of current (short-term) assets and current liabilities. Narrative disclosures in the reports state that liquidity is sufficient to meet immediate obligations, and total assets materially exceed total liabilities for the firms reported in 2023."
+  },
+  {
+    "timestamp": "2026-03-06T17:46:23.775313",
+    "query": "What is the debt to equity ratio?",
+    "confidence": 0.5,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No input was provided; a default structured response was generated containing required sections: executive_summary, analysis, risk_factors, and confidence."
+  },
+  {
+    "timestamp": "2026-03-06T17:46:45.605902",
+    "query": "What is the debt to equity ratio?",
+    "confidence": 0.95,
+    "retry_count": 1,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "Based on the provided balance sheet data, debt-to-equity ratios were computed for OrionTech, VertexRetail, and AlphaTech for 2021\u20132023. Overall trends show declining leverage (deleveraging) for OrionTech and AlphaTech across the period; VertexRetail started with higher leverage in 2021\u20132022 and moved to parity in 2023."
+  },
+  {
+    "timestamp": "2026-03-06T17:49:03.366971",
+    "query": "What are the main financial metrics?",
+    "confidence": 0.85,
+    "retry_count": 0,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "No valid JSON content was provided to parse. I created a corrected JSON object containing the required top-level keys and sensible default values to preserve structure and enable downstream processing."
+  },
+  {
+    "timestamp": "2026-03-06T17:59:30.797873",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.8,
+    "retry_count": 0,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "OrionTech's debt-to-equity ratio declined from 1.00 in 2021 to 0.79 in 2023, indicating de-leveraging (Liabilities $200M / Equity $200M in 2021; $230M / $290M in 2023). VertexRetail's ratio fell from 1.31 in 2021 to 1.00 in 2023, moving toward parity (Liabilities $170M / Equity $130M in 2021; $195M / $195M in 2023)."
+  },
+  {
+    "timestamp": "2026-03-06T18:00:26.011090",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No input was provided to parse. This response supplies a default structured output indicating the absence of source content."
+  },
+  {
+    "timestamp": "2026-03-06T18:00:55.346561",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.6,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. This output is a concise placeholder that identifies likely issues and recommends next steps to obtain a complete, accurate analysis."
+  },
+  {
+    "timestamp": "2026-03-06T18:01:23.777675",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "No malformed JSON was provided. Created a sensible default response indicating missing input and recommended next steps."
+  },
+  {
+    "timestamp": "2026-03-06T18:01:54.068554",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 3,
+    "weight": 1.0,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. This output contains default structured sections to replace the missing malformed JSON: an executive summary, a brief analysis, a list of risk factors, and a confidence score. Replace these placeholders with the original content for an accurate result."
+  },
+  {
+    "timestamp": "2026-03-06T18:09:22.919598",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No input was provided. This output contains a default placeholder summary and recommendations based on the absence of content."
+  },
+  {
+    "timestamp": "2026-03-06T18:09:54.951226",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. This response supplies default structured output to meet the required schema."
+  },
+  {
+    "timestamp": "2026-03-06T18:10:25.937012",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. This response supplies a default structured output with an executive summary, a brief analysis, identified risk factors, and a confidence score to allow onward use or easy replacement when actual content is supplied."
+  },
+  {
+    "timestamp": "2026-03-06T18:10:54.841249",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 3,
+    "weight": 1.0,
+    "meets_threshold": false,
+    "executive_summary": "No content was provided; a default executive summary has been generated indicating that required fields were created due to missing input."
+  },
+  {
+    "timestamp": "2026-03-06T18:12:02.251684",
+    "query": "What are the key risk factors mentioned?",
+    "confidence": 0.8,
+    "retry_count": 0,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "The documents identify a consistent set of operational, market, financial, regulatory, and technological risks across reports, including macroeconomic uncertainty, inflationary pressures, supply chain disruptions, cybersecurity threats, and regulatory compliance challenges. Management cites mitigations such as \"diversified sourcing strategies,\" \"robust internal controls,\" \"continuous monitoring systems,\" and \"strategic scenario planning.\""
+  },
+  {
+    "timestamp": "2026-03-06T18:18:57.160663",
+    "query": "Summarize the cash flow trends",
+    "confidence": 0.5,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No input JSON was provided. This output supplies default, sensible placeholders for the required keys."
+  },
+  {
+    "timestamp": "2026-03-06T18:19:33.611743",
+    "query": "Summarize the cash flow trends",
+    "confidence": 0.2,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. Unable to perform a specific analysis. The following output is a default placeholder summarizing the absence of data and suggested next steps."
+  },
+  {
+    "timestamp": "2026-03-06T18:20:06.288065",
+    "query": "Summarize the cash flow trends",
+    "confidence": 0.5,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. This response contains a default structured JSON with placeholder summaries and risk factors."
+  },
+  {
+    "timestamp": "2026-03-06T18:20:39.546537",
+    "query": "Summarize the cash flow trends",
+    "confidence": 0.5,
+    "retry_count": 3,
+    "weight": 1.0,
+    "meets_threshold": false,
+    "executive_summary": "No content provided. Unable to generate a specific summary. Please supply the original malformed JSON or the content to parse."
+  },
+  {
+    "timestamp": "2026-03-06T18:25:25.283763",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.85,
+    "retry_count": 0,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "OrionTech's debt-to-equity ratio declined from 1.000 in 2021 to 0.793 in 2023, reflecting deleveraging as equity grew faster than liabilities. VertexRetail's debt-to-equity also improved from 1.308 in 2021 to 1.000 in 2023, indicating a move toward a more balanced capital structure consistent with management commentary."
+  },
+  {
+    "timestamp": "2026-03-06T18:31:21.288986",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.85,
+    "retry_count": 0,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "Based on the provided balance sheets, both companies show improving debt-to-equity profiles from 2021 to 2023. OrionTech's debt-to-equity fell from 1.00 in 2021 to ~0.79 in 2023, while VertexRetail's fell from ~1.31 in 2021 to 1.00 in 2023, reflecting management statements about a balanced capital structure and prudent capital allocation."
+  },
+  {
+    "timestamp": "2026-03-06T18:32:25.577040",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No malformed JSON was provided. Returned a default, valid JSON structure with placeholder analysis and risk factors."
+  },
+  {
+    "timestamp": "2026-03-06T18:32:59.698254",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "No input JSON was provided. A default structured output has been generated to satisfy the required schema."
+  },
+  {
+    "timestamp": "2026-03-06T18:33:36.312748",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "No malformed JSON was provided. A default structured response has been generated with placeholder content for the required keys."
+  },
+  {
+    "timestamp": "2026-03-06T18:40:10.072871",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.25,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided; unable to analyze or fix specific malformed JSON. This output provides a placeholder structured response and guidance on next steps to supply the necessary input."
+  },
+  {
+    "timestamp": "2026-03-06T18:40:31.000836",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.95,
+    "retry_count": 1,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "Across the provided reports, the three companies (VertexRetail, OrionTech, AlphaTech) each show consistent revenue growth over the 2021\u20132023 period. Revenues rose year-over-year in each case, driven in the reports by strong demand, market penetration and operational initiatives."
+  },
+  {
+    "timestamp": "2026-03-06T18:45:33.959140",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.8,
+    "retry_count": 0,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "No malformed content was provided. A default structured response with the required keys has been generated."
+  },
+  {
+    "timestamp": "2026-03-06T18:46:30.241410",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.8,
+    "retry_count": 0,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "Using the provided balance sheet figures, OrionTech\u2019s debt-to-equity ratio declined from 1.00 (100%) in 2021 to 0.79 (79.3%) in 2023, indicating deleveraging or stronger equity growth. VertexRetail\u2019s ratio improved from 1.31 (130.8%) in 2021 to 1.00 (100.0%) in 2023, showing reduced leverage but remaining higher than OrionTech in 2023."
+  },
+  {
+    "timestamp": "2026-03-06T18:52:09.847823",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.0,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No content was provided to parse. Unable to perform a substantive analysis. The response below provides defaults and guidance for resubmission."
+  },
+  {
+    "timestamp": "2026-03-06T18:52:39.593321",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.4,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. Generated a default structured response with placeholders to satisfy the required schema."
+  },
+  {
+    "timestamp": "2026-03-06T18:53:08.633464",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.65,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. A default structured response was generated to satisfy the required schema and indicate the absence of original data."
+  },
+  {
+    "timestamp": "2026-03-06T18:54:08.036502",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.6,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. This output supplies a default structured summary, a brief analysis, identified risk factors, and a confidence estimate to be used as a starting point."
+  },
+  {
+    "timestamp": "2026-03-06T18:54:40.181023",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.6,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "No input was provided. This JSON supplies a minimal, sensible default response to meet the required structure."
+  },
+  {
+    "timestamp": "2026-03-06T18:55:14.320260",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.65,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "No original content was provided. This response supplies a concise, sensible default summary: the document is a corrected, minimal structured output containing an executive summary, an analysis with findings and recommendations, a list of key risk factors, and a confidence score."
+  },
+  {
+    "timestamp": "2026-03-06T18:57:47.114837",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided to repair. A default structured response has been generated indicating missing source content and next steps to resolve."
+  },
+  {
+    "timestamp": "2026-03-06T18:58:11.145974",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. Created default structured output with required keys to indicate missing data and next steps."
+  },
+  {
+    "timestamp": "2026-03-06T18:58:39.840042",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.6,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. The document has been reconstructed using sensible defaults to satisfy the required schema while preserving expected intent."
+  },
+  {
+    "timestamp": "2026-03-06T19:05:51.105887",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. A default summary has been generated indicating that the original malformed JSON was not supplied and outlining next steps to allow accurate repair."
+  },
+  {
+    "timestamp": "2026-03-06T19:06:16.356469",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.6,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "No input JSON was provided. This output supplies a default structured response containing the required top-level keys and conservative placeholder content to indicate missing data and assumptions."
+  },
+  {
+    "timestamp": "2026-03-06T19:06:39.865589",
+    "query": "What is the company's revenue growth over the past 3 years?",
+    "confidence": 0.5,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. A default structured response has been generated outlining key observations, recommended next steps, and assumptions."
+  },
+  {
+    "timestamp": "2026-03-06T19:07:33.674478",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.5,
+    "retry_count": 0,
+    "weight": 0.6065306597126334,
+    "meets_threshold": false,
+    "executive_summary": "No input was provided. This JSON was generated as a default placeholder to fulfill the required structure and should be replaced with content derived from the original data when available."
+  },
+  {
+    "timestamp": "2026-03-06T19:08:04.298240",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.0,
+    "retry_count": 1,
+    "weight": 0.36787944117144233,
+    "meets_threshold": false,
+    "executive_summary": "No content was provided to parse. Unable to restore or correct malformed JSON without an input example."
+  },
+  {
+    "timestamp": "2026-03-06T19:08:33.964019",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.5,
+    "retry_count": 2,
+    "weight": 0.22313016014842982,
+    "meets_threshold": false,
+    "executive_summary": "No input content was provided. A default structured response has been generated to satisfy the required keys and preserve the intent of returning parsed JSON."
+  },
+  {
+    "timestamp": "2026-03-06T19:11:08.134416",
+    "query": "Analyze the company's debt-to-equity ratio",
+    "confidence": 0.85,
+    "retry_count": 0,
+    "weight": 1.0,
+    "meets_threshold": true,
+    "executive_summary": "Based on the provided balance sheet figures, OrionTech\u2019s debt-to-equity ratio declined from 1.00x in 2021 to 0.79x in 2023, indicating reduced leverage. VertexRetail\u2019s debt-to-equity ratio improved from 1.31x in 2021 to 1.00x in 2023, moving toward parity between liabilities and equity."
   }
 ]

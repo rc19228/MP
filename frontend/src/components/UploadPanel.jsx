@@ -7,7 +7,6 @@ const UploadPanel = ({ onUploadSuccess }) => {
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState(null);
   const [uploadResult, setUploadResult] = useState(null);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -68,7 +67,6 @@ const UploadPanel = ({ onUploadSuccess }) => {
         type: 'success',
         message: `✅ Successfully processed ${file.name}!`,
       });
-      setShowSuccessPopup(true);
       setFile(null);
       if (onUploadSuccess) onUploadSuccess(result);
     } catch (error) {
@@ -210,50 +208,6 @@ const UploadPanel = ({ onUploadSuccess }) => {
               <span>Start Asking Questions</span>
               <ArrowRight size={22} />
             </button>
-          </div>
-        </div>
-      )}
-
-      {showSuccessPopup && uploadResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-          <div className="w-full max-w-lg bg-gradient-to-br from-success-500/20 to-black/80 border border-success-500/40 rounded-2xl p-6 md:p-8 shadow-2xl animate-scale-in">
-            <div className="flex items-start space-x-3 mb-4">
-              <CheckCircle size={24} className="text-success-400 mt-0.5" />
-              <div>
-                <h3 className="text-xl font-bold text-success-100">Upload Successful</h3>
-                <p className="text-sm text-gray-300 mt-1">
-                  {uploadResult.filename} was indexed with {uploadResult.chunks_created} chunks.
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-black/30 border border-white/10 rounded-xl p-4 mb-5">
-              <p className="text-sm text-gray-300 mb-2">Start with one of these prompts:</p>
-              <ul className="text-sm text-gray-400 space-y-1">
-                <li>• What is the net profit margin and how did it change YoY?</li>
-                <li>• Summarize revenue drivers and margin pressures.</li>
-                <li>• What are the top risks highlighted in this report?</li>
-              </ul>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => {
-                  setShowSuccessPopup(false);
-                  window.dispatchEvent(new CustomEvent('switchTab', { detail: 'query' }));
-                }}
-                className="btn-primary flex-1 flex items-center justify-center space-x-2"
-              >
-                <span>Go to Query</span>
-                <ArrowRight size={18} />
-              </button>
-              <button
-                onClick={() => setShowSuccessPopup(false)}
-                className="btn-secondary flex-1"
-              >
-                Stay Here
-              </button>
-            </div>
           </div>
         </div>
       )}

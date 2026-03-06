@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, Sparkles, Loader } from 'lucide-react';
 import { askQuery } from '../api/api';
 import ResultDisplay from './ResultDisplay';
@@ -9,6 +9,7 @@ const QueryPanel = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [workflowData, setWorkflowData] = useState(null);
+  const [currentAgent, setCurrentAgent] = useState(null);
 
   const exampleQueries = [
     "What is the company's revenue growth over the past 3 years?",
@@ -16,6 +17,28 @@ const QueryPanel = () => {
     "What are the key risk factors mentioned?",
     "Summarize the cash flow trends",
   ];
+
+  // Animate through agents during loading
+  useEffect(() => {
+    if (!loading) {
+      setCurrentAgent(null);
+      return;
+    }
+
+    const agents = ['planner', 'retriever', 'analyzer', 'generator', 'critic'];
+    let agentIndex = 0;
+    
+    // Start with planner
+    setCurrentAgent(agents[0]);
+    
+    // Cycle through agents every 2 seconds
+    const interval = setInterval(() => {
+      agentIndex = (agentIndex + 1) % agents.length;
+      setCurrentAgent(agents[agentIndex]);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [loading]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,6 +50,16 @@ const QueryPanel = () => {
 
     try {
       const response = await askQuery(query);
+      
+      // Check if backend returned an error status
+      if (response.status === 'error') {
+        setResult({
+          error: true,
+          message: response.executive_summary || 'Failed to process query. Please try again.',
+        });
+        return;
+      }
+      
       setResult(response);
       
       // Simulate workflow data for visualization
@@ -38,12 +71,47 @@ const QueryPanel = () => {
         generator: { completed: true },
         critic: { completed: true },
         confidence: response.confidence || 0.85,
-        retry_count: response.retry_count || 0,
+        retry_count: response.plan?.retry_attempt || response.retry_count || 0,
       });
     } catch (error) {
+      console.error('Query error:', error);
+      
+      let errorMessage = 'Failed to process query. Please try again.';
+      
+      // Check if it's a timeout error
+      if (error.code === 'ECONNABORTED') {
+        errorMessage = '⏱️ The server took too long to respond. Your query might be too complex or the system is processing heavy workloads. Please try a more specific question or try again later.';
+      } else if (error.response?.status === 500) {
+        // Server error with potential detail
+        const detail = error.response?.data?.detail || '';
+        if (detail.toLowerCase().includes('azure') || detail.toLowerCase().includes('openai')) {
+          errorMessage = '🔌 Unable to connect to the AI service. The system is experiencing connectivity issues. Please try again in a moment.';
+        } else if (detail.toLowerCase().includes('parse') || detail.toLowerCase().includes('json')) {
+          errorMessage = '⚠️ Unable to generate a proper response. The AI returned malformed data. Please rephrase your question or try again.';
+        } else if (detail.toLowerCase().includes('timeout')) {
+          errorMessage = '⏱️ The analysis is taking longer than expected. Please try a simpler question or break it into smaller parts.';
+        } else {
+          errorMessage = `❌ Server error: ${detail || 'An unexpected error occurred while processing your request. Please try again.'}`;
+        }
+      } else if (error.response?.status === 404) {
+        errorMessage = '🔍 The requested endpoint was not found. Please ensure the backend server is running correctly.';
+      } else if (error.response?.status === 400) {
+        const detail = error.response?.data?.detail || '';
+        errorMessage = `📝 Invalid request: ${detail || 'Please check your query and try again.'}`;
+      } else if (!error.response) {
+        // Network error
+        errorMessage = '🌐 Unable to reach the server. Please check your connection and ensure the backend is running.';
+      } else {
+        // Generic error with detail if available
+        const detail = error.response?.data?.detail || error.message;
+        if (detail && detail !== 'Failed to process query. Please try again.') {
+          errorMessage = `⚠️ ${detail}`;
+        }
+      }
+      
       setResult({
         error: true,
-        message: error.response?.data?.detail || 'Failed to process query. Please try again.',
+        message: errorMessage,
       });
     } finally {
       setLoading(false);
@@ -52,6 +120,25 @@ const QueryPanel = () => {
 
   const handleExampleClick = (exampleQuery) => {
     setQuery(exampleQuery);
+  };
+
+  // Build progressive workflow data based on current agent
+  const getLoadingWorkflowData = () => {
+    const agents = ['planner', 'retriever', 'analyzer', 'generator', 'critic'];
+    const currentIndex = agents.indexOf(currentAgent);
+    
+    const workflowData = {};
+    agents.forEach((agent, index) => {
+      if (index < currentIndex) {
+        workflowData[agent] = { completed: true };
+      } else if (index === currentIndex) {
+        workflowData[agent] = { active: true };
+      } else {
+        workflowData[agent] = { active: false };
+      }
+    });
+    
+    return workflowData;
   };
 
   return (
@@ -110,17 +197,9 @@ const QueryPanel = () => {
         </div>
       </div>
 
-      {loading && (
+      {loading && currentAgent && (
         <div className="animate-fade-in-up">
-          <AgentWorkflow 
-            workflowData={{
-              planner: { active: true },
-              retriever: { active: false },
-              analyzer: { active: false },
-              generator: { active: false },
-              critic: { active: false },
-            }}
-          />
+          <AgentWorkflow workflowData={getLoadingWorkflowData()} />
         </div>
       )}
 

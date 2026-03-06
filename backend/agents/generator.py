@@ -3,7 +3,7 @@ Generator Agent
 Generates structured financial analysis using LLM
 """
 from typing import Dict
-from utils.ollama_client import get_ollama_client
+from utils.llm_client import get_llm_client
 from config import settings
 
 
@@ -12,9 +12,9 @@ class GeneratorAgent:
         """
         Initialize Generator Agent
         """
-        self.ollama = get_ollama_client()
+        self.llm = get_llm_client()
         self.system_prompt = """You are a financial analysis expert.
-Your task is to generate structured financial analysis based ONLY on the provided context.
+Your task is to generate structured, readable financial analysis based ONLY on the provided context.
 
 CRITICAL RULES:
 1. Use ONLY information from the provided context
@@ -22,6 +22,12 @@ CRITICAL RULES:
 3. If information is missing, state "Information not available"
 4. Be precise and cite specific figures from the context
 5. Provide a confidence score (0.0-1.0) based on information completeness
+6. Write in clear, professional language with proper formatting:
+   - Use paragraph breaks (double newlines) to separate major points
+   - Keep sentences concise and readable
+   - Structure content logically with clear sections
+   - Use numbered or bulleted lists for multiple items
+   - Avoid wall-of-text formatting
 
 Return ONLY valid JSON with no markdown formatting."""
     
@@ -65,8 +71,8 @@ Based on the above context, provide a comprehensive financial analysis.
 Return JSON with this exact structure:
 {{
   "executive_summary": "Brief overview (2-3 sentences)",
-  "analysis": "Detailed analysis addressing the query",
-  "risk_factors": "Identified risks or concerns",
+  "analysis": "Detailed analysis with proper paragraph breaks and structure",
+  "risk_factors": "1) First risk - details\\n2) Second risk - details\\n3) Third risk - details",
   "confidence": 0.85
 }}
 
@@ -78,7 +84,7 @@ Set confidence based on:
 
 JSON response:"""
         
-        result = self.ollama.generate_json(
+        result = self.llm.generate_json(
             prompt=prompt,
             system=self.system_prompt,
             temperature=temperature,

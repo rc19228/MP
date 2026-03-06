@@ -1,4 +1,4 @@
-# 🔧 Backend - Agentic RAG System
+ 🔧 Backend - Agentic RAG System
 
 FastAPI-based backend implementing a 5-agent pipeline for financial report analysis with intelligent retry mechanisms, JSON repair fallbacks, and persistent vector storage.
 
@@ -39,6 +39,7 @@ User Query
 │  • Creates structured JSON response                    │
 │  • JSON repair fallback via SOP                        │
 │  • Includes exec summary, analysis, risks, metrics     │
+│  • Formats output for readability                      │
 └────────────────┬────────────────────────────────────────┘
                  │
                  ▼
@@ -77,12 +78,16 @@ backend/
 │
 ├── utils/
 │   ├── __init__.py
-│   ├── ollama_client.py    # LLM API client + JSON repair
-│   └── weight_decay.py     # Retry parameter adjustment
+│   ├── azure_openai_client.py  # Azure OpenAI client + JSON repair
+│   ├── ollama_client.py        # Ollama client + JSON repair
+│   ├── llm_client.py           # LLM provider selector
+│   └── weight_decay.py         # Retry parameter adjustment
 │
 ├── config.py               # Configuration & environment
 ├── main.py                 # FastAPI application
-└── requirements.txt        # Python dependencies
+├── requirements.txt        # Python dependencies
+├── .env.example           # Environment variables template
+└── README.md              # This file
 ```
 
 ## 🚀 Getting Started
@@ -100,7 +105,13 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. Install Ollama (if not already installed)
+### 2. Configure LLM Provider
+
+This system supports two LLM providers: **Ollama** (local) and **Azure OpenAI** (cloud).
+
+#### Option A: Using Ollama (Local, Free)
+
+1. **Install Ollama:**
 
 ```bash
 # macOS
@@ -110,10 +121,50 @@ brew install ollama
 curl -fsSL https://ollama.ai/install.sh | sh
 
 # Windows: Download from https://ollama.ai
+```
 
-# Pull model
+2. **Pull a model:**
+
+```bash
 ollama pull llama3.1:8b
 ```
+
+3. **Configure .env:**
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+```bash
+LLM_PROVIDER=ollama
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.1:8b
+```
+
+#### Option B: Using Azure OpenAI (Cloud)
+
+1. **Create Azure OpenAI resource** in Azure Portal
+
+2. **Deploy a model** (e.g., GPT-4, GPT-4o-mini)
+
+3. **Configure .env:**
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+```bash
+LLM_PROVIDER=azure
+AZURE_OPENAI_ENDPOINT=https://your-resource-name.cognitiveservices.azure.com/
+AZURE_OPENAI_API_KEY=your-api-key-here
+AZURE_OPENAI_DEPLOYMENT=your-deployment-name
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
+AZURE_OPENAI_MODEL=gpt-4
+```
+
+**⚠️ Important:** Never commit your `.env` file with real credentials!
 
 ### 3. Optional: Install Tesseract OCR
 
@@ -129,40 +180,50 @@ sudo apt-get install tesseract-ocr
 # Windows: Download from https://github.com/UB-Mannheim/tesseract/wiki
 ```
 
-### 4. Configure Environment
-
-Create `.env` file or edit `config.py`:
-
-```bash
-# Ollama Configuration
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3.1:8b
-
-# LLM Parameters
-LLM_TEMPERATURE=0.1         # Lower = more deterministic
-LLM_MAX_TOKENS=2000         # Max response length
-
-# Retrieval Settings
-TOP_K_CHUNKS=5              # Initial chunks to retrieve
-CHUNK_SIZE=500              # Characters per chunk
-CHUNK_OVERLAP=50            # Overlap between chunks
-
-# Quality Control
-CONFIDENCE_THRESHOLD=0.7    # Retry if below this
-MAX_RETRIES=3               # Maximum retry attempts
-
-# Storage
-CHROMA_PERSIST_DIR=../chroma_db
-UPLOADS_DIR=../uploads
-```
-
-### 5. Run Server
+### 4. Run Server
 
 ```bash
 python main.py
 ```
 
 Server will start on `http://localhost:8888`
+
+## 🔧 Configuration
+
+All configuration is managed through environment variables in `.env` file:
+
+### Required Settings
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `LLM_PROVIDER` | LLM provider to use | `ollama` or `azure` |
+
+### Ollama Settings (when LLM_PROVIDER=ollama)
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `OLLAMA_BASE_URL` | Ollama server URL | `http://localhost:11434` |
+| `OLLAMA_MODEL` | Model name | `llama3.1:8b` |
+
+### Azure OpenAI Settings (when LLM_PROVIDER=azure)
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `AZURE_OPENAI_ENDPOINT` | Azure endpoint URL | `https://your-resource.cognitiveservices.azure.com/` |
+| `AZURE_OPENAI_API_KEY` | API key | `your-key-here` |
+| `AZURE_OPENAI_DEPLOYMENT` | Deployment name | `gpt-4` |
+| `AZURE_OPENAI_API_VERSION` | API version | `2024-12-01-preview` |
+| `AZURE_OPENAI_MODEL` | Model name | `gpt-4` |
+
+### Optional Settings
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `LLM_TEMPERATURE` | Response creativity (0.0-1.0) | `0.3` |
+| `LLM_MAX_TOKENS` | Max response length | `2000` |
+| `TOP_K_CHUNKS` | Initial retrieval depth | `5` |
+| `MAX_RETRIES` | Maximum retry attempts | `3` |
+| `CHROMA_PERSIST_DIR` | Vector DB storage path | `../chroma_db` |
 
 ## 📡 API Endpoints
 
